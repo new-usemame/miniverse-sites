@@ -12,12 +12,20 @@ nav.addEventListener('click', () => {
   nav.classList.remove('open');
 });
 
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && nav.classList.contains('open')) {
+    menuButton.setAttribute('aria-expanded', 'false');
+    nav.classList.remove('open');
+    menuButton.focus();
+  }
+});
+
 document.querySelectorAll('[data-plan]').forEach((link) => {
   link.addEventListener('click', () => {
     const select = document.querySelector('[name="service"]');
     const plan = link.dataset.plan;
-    select.value = plan === 'Partner' ? 'Ongoing content partner' : 'Something else';
-    if (plan !== 'Partner') document.querySelector('[name="message"]').value = `I'm interested in the ${plan} package. `;
+    select.value = `${plan} package`;
+    document.querySelector('[name="message"]').value = `I'm interested in the ${plan} package. `;
   });
 });
 
