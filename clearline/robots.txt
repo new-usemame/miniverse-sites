@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://new-usemame.github.io/miniverse-sites/clearline/sitemap.xml

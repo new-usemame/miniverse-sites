@@ -1,5 +1,29 @@
 const menuButton = document.querySelector('.menu-button');
 const nav = document.querySelector('#site-nav');
+const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign'];
+
+function captureAttribution() {
+  const params = new URLSearchParams(window.location.search);
+  const stored = {};
+
+  campaignKeys.forEach((key) => {
+    const value = params.get(key);
+    if (value) sessionStorage.setItem(`clearline_${key}`, value.slice(0, 100));
+    stored[key] = sessionStorage.getItem(`clearline_${key}`) || '';
+  });
+
+  const referrer = document.referrer && !document.referrer.startsWith(window.location.origin)
+    ? document.referrer.slice(0, 250)
+    : sessionStorage.getItem('clearline_referrer') || '';
+  if (referrer) sessionStorage.setItem('clearline_referrer', referrer);
+
+  document.querySelector('[name="source"]').value = stored.utm_source;
+  document.querySelector('[name="medium"]').value = stored.utm_medium;
+  document.querySelector('[name="campaign"]').value = stored.utm_campaign;
+  document.querySelector('[name="referrer"]').value = referrer;
+}
+
+captureAttribution();
 
 menuButton.addEventListener('click', () => {
   const open = menuButton.getAttribute('aria-expanded') === 'true';
@@ -55,7 +79,14 @@ document.querySelector('#contact-form').addEventListener('submit', (event) => {
   const data = new FormData(form);
   const subject = encodeURIComponent(`Project inquiry: ${data.get('service')}`);
   const website = data.get('website') ? `\nHomepage: ${data.get('website')}` : '';
-  const body = encodeURIComponent(`Hi Clearline,\n\nI'm ${data.get('firstName')} (${data.get('email')}).\n\nI'm interested in: ${data.get('service')}${website}\n\n${data.get('message')}`);
+  const attribution = [
+    data.get('source') && `Source: ${data.get('source')}`,
+    data.get('medium') && `Medium: ${data.get('medium')}`,
+    data.get('campaign') && `Campaign: ${data.get('campaign')}`,
+    data.get('referrer') && `Referrer: ${data.get('referrer')}`
+  ].filter(Boolean);
+  const attributionBlock = attribution.length ? `\n\nHow I found Clearline:\n${attribution.join('\n')}` : '';
+  const body = encodeURIComponent(`Hi Clearline,\n\nI'm ${data.get('firstName')} (${data.get('email')}).\n\nI'm interested in: ${data.get('service')}${website}\n\n${data.get('message')}${attributionBlock}`);
   document.querySelector('.form-status').textContent = 'Opening your email app to send the details…';
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
 });
