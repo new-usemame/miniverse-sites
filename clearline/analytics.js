@@ -4,6 +4,7 @@
   const storageKey = 'clearline_analytics_v1';
   const queueKey = 'clearline_analytics_queue_v1';
   const sessionKey = 'clearline_analytics_session_v1';
+  const attributionKey = 'clearline_analytics_attribution_v1';
   const endpoint = document.currentScript?.dataset.endpoint || '';
   let flushing = false;
 
@@ -18,6 +19,43 @@
       // A short-lived identifier is optional when browser storage is unavailable.
       return '';
     }
+  }
+
+  function getAttribution() {
+    const params = new URLSearchParams(window.location.search);
+    let stored = {};
+    try {
+      stored = JSON.parse(sessionStorage.getItem(attributionKey)) || {};
+    } catch {
+      stored = {};
+    }
+
+    let referrer = '';
+    try {
+      referrer = document.referrer && new URL(document.referrer).origin !== window.location.origin
+        ? new URL(document.referrer).hostname
+        : '';
+    } catch {
+      referrer = '';
+    }
+
+    const current = {
+      source: (params.get('utm_source') || '').slice(0, 100),
+      medium: (params.get('utm_medium') || '').slice(0, 100),
+      campaign: (params.get('utm_campaign') || '').slice(0, 100),
+      referrer
+    };
+    const hasCurrentAttribution = current.source || current.medium || current.campaign || current.referrer;
+    const attribution = hasCurrentAttribution ? current : stored;
+
+    if (hasCurrentAttribution) {
+      try {
+        sessionStorage.setItem(attributionKey, JSON.stringify(attribution));
+      } catch {
+        // Attribution is optional when browser storage is unavailable.
+      }
+    }
+    return attribution;
   }
 
   function readSummary() {
@@ -119,21 +157,7 @@
 
   const pageType = document.body.dataset.analyticsPage;
   if (pageType) {
-    const params = new URLSearchParams(window.location.search);
-    let referrer = '';
-    try {
-      referrer = document.referrer && new URL(document.referrer).origin !== window.location.origin
-        ? new URL(document.referrer).hostname
-        : '';
-    } catch {
-      referrer = '';
-    }
-    track(`${pageType}_view`, {
-      source: (params.get('utm_source') || '').slice(0, 100),
-      medium: (params.get('utm_medium') || '').slice(0, 100),
-      campaign: (params.get('utm_campaign') || '').slice(0, 100),
-      referrer
-    });
+    track(`${pageType}_view`, getAttribution());
   }
   else flushQueue();
 }());

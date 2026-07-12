@@ -159,10 +159,17 @@
       }));
 
       const sources = new Map();
-      events.filter((event) => ['homepage_view', 'audit_landing_view', 'blog_index_view', 'blog_post_view'].includes(event.name)).forEach((event) => {
-        const source = event.properties?.source || event.properties?.referrer || 'Direct / unknown';
-        sources.set(source, (sources.get(source) || 0) + 1);
-      });
+      const attributedSessions = new Set();
+      events
+        .filter((event) => ['homepage_view', 'audit_landing_view', 'blog_index_view', 'blog_post_view'].includes(event.name))
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+        .forEach((event) => {
+          const session = event.sessionId || `legacy:${event.id || event.timestamp}`;
+          if (attributedSessions.has(session)) return;
+          attributedSessions.add(session);
+          const source = event.properties?.source || event.properties?.referrer || 'Direct / unknown';
+          sources.set(source, (sources.get(source) || 0) + 1);
+        });
       const sourceRows = [...sources.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
       const sourceList = document.querySelector('#source-list');
       sourceList.replaceChildren(...sourceRows.map(([source, value]) => {
