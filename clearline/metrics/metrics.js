@@ -224,15 +224,19 @@
         body: JSON.stringify(diagnostic)
       });
       if (!sent.ok) throw new Error(`Collector returned ${sent.status}`);
-      const received = await fetch(feed, { cache: 'no-store' });
-      if (!received.ok) throw new Error(`Feed returned ${received.status}`);
-      const found = (await received.text()).split('\n').some((line) => {
-        try {
-          return JSON.parse(JSON.parse(line).message || '{}').id === id;
-        } catch {
-          return false;
-        }
-      });
+      let found = false;
+      for (let attempt = 0; attempt < 5 && !found; attempt += 1) {
+        if (attempt) await new Promise((resolve) => window.setTimeout(resolve, 1000));
+        const received = await fetch(feed, { cache: 'no-store' });
+        if (!received.ok) throw new Error(`Feed returned ${received.status}`);
+        found = (await received.text()).split('\n').some((line) => {
+          try {
+            return JSON.parse(JSON.parse(line).message || '{}').id === id;
+          } catch {
+            return false;
+          }
+        });
+      }
       if (!found) throw new Error('Diagnostic event was not returned by the feed');
       result.dataset.state = 'success';
       result.textContent = 'End-to-end tracking passed: browser write and dashboard read both work.';
