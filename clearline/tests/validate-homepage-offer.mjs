@@ -33,6 +33,10 @@ assert.match(
 assert.match(homepage, /1 of 3 claimed/, 'the announcement must use the verified request count');
 assert.match(homepage, /Two founder-template spots remain/, 'the announcement must state the truthful remaining availability');
 assert.match(homepage, /data-offer-countdown/, 'the announcement must show the live offer deadline');
+assert.match(homepage, /class="offer-timer" role="timer"[^>]*data-offer-timer/, 'the hero must show an accessible live offer timer');
+assert.match(homepage, /data-offer-timer-days>[—<]/, 'the timer must expose a days value');
+assert.match(homepage, /data-offer-timer-hours>[—<]/, 'the timer must expose an hours value');
+assert.match(homepage, /data-offer-timer-minutes>[—<]/, 'the timer must expose a minutes value');
 assert.doesNotMatch(homepage, /only 1 (?:founder-template )?(?:bonus|spot) left/i, 'the homepage must not claim unsupported scarcity');
 assert.match(
   script,

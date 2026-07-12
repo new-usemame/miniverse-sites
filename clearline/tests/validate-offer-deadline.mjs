@@ -21,6 +21,10 @@ const targets = Array.from({ length: 3 }, () => ({
 const countdown = { textContent: '' };
 const dayNumber = { textContent: '' };
 const dayLabel = { textContent: '' };
+const timer = { attributes: {}, setAttribute(name, value) { this.attributes[name] = value; } };
+const timerDay = { textContent: '' };
+const timerHour = { textContent: '' };
+const timerMinute = { textContent: '' };
 const claimedCount = { textContent: '' };
 const remainingCount = { textContent: '' };
 const requestCount = { textContent: '' };
@@ -53,6 +57,10 @@ vm.runInNewContext(offerScript, {
     '[data-offer-countdown]': [countdown],
     '[data-offer-days-number]': [dayNumber],
     '[data-offer-days-label]': [dayLabel],
+    '[data-offer-timer]': [timer],
+    '[data-offer-timer-days]': [timerDay],
+    '[data-offer-timer-hours]': [timerHour],
+    '[data-offer-timer-minutes]': [timerMinute],
     '[data-offer-claimed-count]': [claimedCount],
     '[data-offer-remaining-count]': [remainingCount],
     '[data-offer-request-count]': [requestCount],
@@ -68,6 +76,10 @@ for (const target of targets) {
 assert.equal(countdown.textContent, 'Offer ends today');
 assert.equal(dayNumber.textContent, 0);
 assert.equal(dayLabel.textContent, 'ends today');
+assert.equal(timerDay.textContent, '00');
+assert.equal(timerHour.textContent, '11');
+assert.equal(timerMinute.textContent, '59');
+assert.equal(timer.attributes['aria-label'], 'Offer ends in 0 days, 11 hours, and 59 minutes');
 assert.equal(claimedCount.textContent, '1 of 3 claimed');
 assert.equal(remainingCount.textContent, '2 founder-template spots remain for qualifying audit requests');
 assert.equal(requestCount.textContent, '1 founder has already requested an audit.');
@@ -79,6 +91,9 @@ intervalCallback(new Date('2026-07-13T12:00:00Z'));
 assert.equal(countdown.textContent, '6 days left', 'offer countdown must update after the local day changes');
 assert.equal(dayNumber.textContent, 6);
 assert.equal(dayLabel.textContent, 'days left');
+assert.equal(timerDay.textContent, '06');
+assert.equal(timerHour.textContent, '11');
+assert.equal(timerMinute.textContent, '59');
 assert.equal(claimedCount.textContent, '0 of 3 claimed', 'last week\'s claim must not carry into a new offer window');
 assert.equal(remainingCount.textContent, '3 founder-template spots remain for qualifying audit requests');
 assert.equal(requestCount.textContent, 'Be the first founder to request an audit this week.');

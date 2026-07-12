@@ -9,6 +9,10 @@
   const countdowns = document.querySelectorAll('[data-offer-countdown]');
   const dayNumbers = document.querySelectorAll('[data-offer-days-number]');
   const dayLabels = document.querySelectorAll('[data-offer-days-label]');
+  const timers = document.querySelectorAll('[data-offer-timer]');
+  const timerDays = document.querySelectorAll('[data-offer-timer-days]');
+  const timerHours = document.querySelectorAll('[data-offer-timer-hours]');
+  const timerMinutes = document.querySelectorAll('[data-offer-timer-minutes]');
   const claimedCounts = document.querySelectorAll('[data-offer-claimed-count]');
   const remainingCounts = document.querySelectorAll('[data-offer-remaining-count]');
   const requestCounts = document.querySelectorAll('[data-offer-request-count]');
@@ -66,6 +70,19 @@
     const countdownText = daysUntilSunday === 0
       ? 'Offer ends today'
       : `${daysUntilSunday} day${daysUntilSunday === 1 ? '' : 's'} left`;
+
+    const remainingMilliseconds = Math.max(deadline.getTime() - now.getTime(), 0);
+    const totalMinutes = Math.floor(remainingMilliseconds / (60 * 1000));
+    const exactDays = Math.floor(totalMinutes / (24 * 60));
+    const exactHours = Math.floor((totalMinutes % (24 * 60)) / 60);
+    const exactMinutes = totalMinutes % 60;
+
+    timerDays.forEach((element) => { element.textContent = String(exactDays).padStart(2, '0'); });
+    timerHours.forEach((element) => { element.textContent = String(exactHours).padStart(2, '0'); });
+    timerMinutes.forEach((element) => { element.textContent = String(exactMinutes).padStart(2, '0'); });
+    timers.forEach((element) => {
+      element.setAttribute('aria-label', `Offer ends in ${exactDays} days, ${exactHours} hours, and ${exactMinutes} minutes`);
+    });
 
     countdowns.forEach((element) => { element.textContent = countdownText; });
     dayNumbers.forEach((element) => { element.textContent = daysUntilSunday; });
