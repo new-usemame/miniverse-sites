@@ -76,7 +76,7 @@ document.querySelectorAll('[data-audit]').forEach((link) => {
   });
 });
 
-document.querySelector('#contact-form').addEventListener('submit', (event) => {
+document.querySelector('#contact-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
   const data = new FormData(form);
@@ -95,6 +95,10 @@ document.querySelector('#contact-form').addEventListener('submit', (event) => {
   window.clearlineAnalytics?.track(intent === 'audit' ? 'audit_form_submission' : 'contact_form_submission', {
     service: data.get('service')
   });
+  await window.clearlineNotifications?.notify(
+    intent === 'audit' ? 'audit_form_submission' : 'contact_form_submission',
+    { id: `${intent}:${Date.now()}` }
+  );
   sessionStorage.setItem('clearline_pending_email', mailto);
   sessionStorage.setItem('clearline_inquiry_intent', intent);
   document.querySelector('.form-status').textContent = 'Thanks—taking you to the final send step…';
