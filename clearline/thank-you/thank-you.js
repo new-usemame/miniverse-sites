@@ -15,4 +15,42 @@ if (pendingEmail?.startsWith('mailto:')) {
 
 if (intent === 'audit') {
   document.querySelector('#thanks-copy').textContent = 'Open the prepared email below and press send. Once it arrives, we’ll review your homepage and reply within three business days.';
+  const referralCard = document.querySelector('#referral-card');
+  const shareButton = document.querySelector('#share-offer');
+  const copyButton = document.querySelector('#copy-offer');
+  const shareStatus = document.querySelector('#share-status');
+  const shareUrl = new URL('../?utm_source=referral&utm_medium=share&utm_campaign=founder_template#audit', window.location.href).href;
+  const shareData = {
+    title: 'Free homepage copy audit from Clearline',
+    text: 'Clearline is offering a free, human-reviewed homepage copy audit, plus a founder messaging template for the first three qualifying startups this week.',
+    url: shareUrl
+  };
+
+  referralCard.hidden = false;
+
+  async function copyShareLink() {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      shareStatus.textContent = 'Referral link copied.';
+      window.clearlineAnalytics?.track('audit_referral_copied');
+    } catch {
+      window.prompt('Copy this referral link:', shareUrl);
+    }
+  }
+
+  shareButton.addEventListener('click', async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        shareStatus.textContent = 'Thanks for sharing Clearline.';
+        window.clearlineAnalytics?.track('audit_referral_shared');
+      } catch (error) {
+        if (error.name !== 'AbortError') await copyShareLink();
+      }
+    } else {
+      await copyShareLink();
+    }
+  });
+
+  copyButton.addEventListener('click', copyShareLink);
 }

@@ -7,6 +7,9 @@
     blog_post_view: 'Blog post viewed',
     audit_form_submission: 'Audit form completed',
     audit_email_opened: 'Prepared audit email opened',
+    audit_cta_clicked: 'Hero audit CTA clicked',
+    audit_referral_shared: 'Audit offer shared',
+    audit_referral_copied: 'Audit referral link copied',
     contact_form_submission: 'Project inquiry completed',
     contact_email_opened: 'Prepared project email opened',
     newsletter_signup: 'Newsletter signup started'

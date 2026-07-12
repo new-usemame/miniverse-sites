@@ -76,6 +76,12 @@ document.querySelectorAll('[data-audit]').forEach((link) => {
   });
 });
 
+document.querySelectorAll('[data-audit-cta]').forEach((link) => {
+  link.addEventListener('click', () => {
+    window.clearlineAnalytics?.track('audit_cta_clicked', { placement: 'hero' });
+  });
+});
+
 document.querySelector('#contact-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;

@@ -37,11 +37,13 @@
     if (endpoint) {
       const payload = JSON.stringify(event);
       if (navigator.sendBeacon) {
-        navigator.sendBeacon(endpoint, new Blob([payload], { type: 'application/json' }));
+        // text/plain is CORS-safelisted, so delivery also works from static hosts.
+        navigator.sendBeacon(endpoint, new Blob([payload], { type: 'text/plain;charset=UTF-8' }));
       } else {
         fetch(endpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
           body: payload,
           keepalive: true
         }).catch(() => {});
