@@ -2,6 +2,9 @@
   'use strict';
 
   const feed = 'https://ntfy.sh/clearline-analytics-6f8d2c1a/json?poll=1&since=all';
+  const refreshInterval = 30000;
+  let refreshTimer;
+  let loading = false;
   const labels = {
     homepage_view: 'Homepage viewed',
     audit_landing_view: 'Audit landing page viewed',
@@ -46,6 +49,8 @@
   }
 
   async function loadMetrics() {
+    if (loading) return;
+    loading = true;
     const status = document.querySelector('#status');
     const refresh = document.querySelector('#refresh');
     status.textContent = 'Refreshing activity…';
@@ -191,10 +196,28 @@
       setCollectorHealth('error', 'Analytics collector unavailable', 'The dashboard could not reach the reporting feed. Try refreshing in a moment.');
       status.textContent = 'Metrics are temporarily unavailable. No site forms or visitor experiences are affected.';
     } finally {
+      loading = false;
       refresh.disabled = false;
     }
   }
 
   document.querySelector('#refresh').addEventListener('click', loadMetrics);
+  function scheduleRefresh() {
+    window.clearInterval(refreshTimer);
+    if (document.hidden) {
+      document.querySelector('#live-refresh').dataset.state = 'paused';
+      document.querySelector('#live-refresh').lastChild.textContent = 'Live refresh paused';
+      return;
+    }
+    document.querySelector('#live-refresh').dataset.state = 'live';
+    document.querySelector('#live-refresh').lastChild.textContent = 'Live refresh on · 30s';
+    refreshTimer = window.setInterval(loadMetrics, refreshInterval);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    scheduleRefresh();
+    if (!document.hidden) loadMetrics();
+  });
+  scheduleRefresh();
   loadMetrics();
 }());

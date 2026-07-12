@@ -15,7 +15,10 @@
 <body>
   <header class="site-header">
     <a class="logo" href="../" aria-label="Clearline Content home"><span class="logo-mark" aria-hidden="true">C</span><span>Clearline<span class="logo-accent">.</span></span></a>
-    <button class="button button-small" id="refresh" type="button">Refresh</button>
+    <div class="refresh-controls">
+      <span class="live-refresh" id="live-refresh" data-state="waiting"><span aria-hidden="true"></span>Live refresh on</span>
+      <button class="button button-small" id="refresh" type="button">Refresh now</button>
+    </div>
   </header>
   <main id="main" class="metrics-main">
     <section class="metrics-heading">
