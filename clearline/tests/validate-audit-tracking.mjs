@@ -18,7 +18,7 @@ assert.match(
 );
 assert.match(
   metrics,
-  /const auditLandingViews = count\('audit_landing_view'\);/,
+  /const auditLandingViews = uniqueCount\('audit_landing_view'\);/,
   'the dashboard must count the event emitted by the dedicated audit page'
 );
 

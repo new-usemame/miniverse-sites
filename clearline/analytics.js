@@ -3,8 +3,22 @@
 
   const storageKey = 'clearline_analytics_v1';
   const queueKey = 'clearline_analytics_queue_v1';
+  const sessionKey = 'clearline_analytics_session_v1';
   const endpoint = document.currentScript?.dataset.endpoint || '';
   let flushing = false;
+
+  function getSessionId() {
+    try {
+      const existing = sessionStorage.getItem(sessionKey);
+      if (existing) return existing;
+      const created = window.crypto?.randomUUID?.() || `${Date.now()}:${Math.random().toString(36).slice(2)}`;
+      sessionStorage.setItem(sessionKey, created);
+      return created;
+    } catch {
+      // A short-lived identifier is optional when browser storage is unavailable.
+      return '';
+    }
+  }
 
   function readSummary() {
     try {
@@ -85,7 +99,8 @@
       name,
       properties,
       path: window.location.pathname,
-      timestamp
+      timestamp,
+      sessionId: getSessionId()
     };
 
     saveLocally(name, timestamp);

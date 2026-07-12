@@ -75,14 +75,23 @@
       );
 
       const count = (name) => events.filter((event) => event.name === name).length;
-      const homepageViews = count('homepage_view');
-      const auditLandingViews = count('audit_landing_view');
-      const auditEntryViews = homepageViews + auditLandingViews;
+      const uniqueCount = (name, sourceEvents = events) => {
+        const matching = sourceEvents.filter((event) => event.name === name);
+        return new Set(matching.map((event) => event.sessionId || `legacy:${event.id || event.timestamp}`)).size;
+      };
+      const uniqueCountAcross = (names, sourceEvents = events) => new Set(
+        sourceEvents
+          .filter((event) => names.includes(event.name))
+          .map((event) => event.sessionId || `legacy:${event.id || event.timestamp}`)
+      ).size;
+      const homepageViews = uniqueCount('homepage_view');
+      const auditLandingViews = uniqueCount('audit_landing_view');
+      const auditEntryViews = uniqueCountAcross(['homepage_view', 'audit_landing_view']);
       const auditClicks = count('audit_cta_clicked');
       const audits = count('audit_form_submission');
       setText('homepage-views', homepageViews);
       setText('audit-landing-views', auditLandingViews);
-      setText('blog-views', count('blog_post_view'));
+      setText('blog-views', uniqueCount('blog_post_view'));
       setText('audit-clicks', auditClicks);
       setText('audit-submissions', audits);
       setText('audit-opened', count('audit_email_opened'));
@@ -97,11 +106,16 @@
       const yesterdayKey = utcDay(yesterday);
       const eventsOn = (day) => events.filter((event) => utcDay(event.timestamp) === day);
       const dailyCount = (dailyEvents, names) => dailyEvents.filter((event) => names.includes(event.name)).length;
+      const dailyUniqueCount = (dailyEvents, names) => new Set(
+        dailyEvents
+          .filter((event) => names.includes(event.name))
+          .map((event) => event.sessionId || `legacy:${event.id || event.timestamp}`)
+      ).size;
       const todayEvents = eventsOn(todayKey);
       const yesterdayEvents = eventsOn(yesterdayKey);
       const entryNames = ['homepage_view', 'audit_landing_view'];
-      const todayEntries = dailyCount(todayEvents, entryNames);
-      const yesterdayEntries = dailyCount(yesterdayEvents, entryNames);
+      const todayEntries = dailyUniqueCount(todayEvents, entryNames);
+      const yesterdayEntries = dailyUniqueCount(yesterdayEvents, entryNames);
       const todayClicks = dailyCount(todayEvents, ['audit_cta_clicked']);
       const yesterdayClicks = dailyCount(yesterdayEvents, ['audit_cta_clicked']);
       const todayAudits = dailyCount(todayEvents, ['audit_form_submission']);
