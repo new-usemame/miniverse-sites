@@ -29,6 +29,14 @@ document.querySelectorAll('[data-plan]').forEach((link) => {
   });
 });
 
+document.querySelectorAll('[data-service]').forEach((link) => {
+  link.addEventListener('click', () => {
+    const service = link.dataset.service;
+    document.querySelector('[name="service"]').value = service;
+    document.querySelector('[name="message"]').value = `I'm interested in ${service.toLowerCase()}. `;
+  });
+});
+
 document.querySelector('#contact-form').addEventListener('submit', (event) => {
   event.preventDefault();
   const form = event.currentTarget;
