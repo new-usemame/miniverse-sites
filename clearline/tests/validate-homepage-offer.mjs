@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 const homepage = await readFile(new URL('index.html', root), 'utf8');
 const script = await readFile(new URL('script.js', root), 'utf8');
+const offerScript = await readFile(new URL('offer.js', root), 'utf8');
 
 assert.match(
   homepage,
@@ -32,7 +33,9 @@ assert.match(
 );
 assert.match(homepage, /1 of 3 claimed/, 'the announcement must use the verified request count');
 assert.match(homepage, /Two founder-template spots remain/, 'the announcement must state the truthful remaining availability');
-assert.match(homepage, /data-offer-countdown/, 'the announcement must show the live offer deadline');
+assert.match(homepage, /This week’s offer <span data-offer-banner-deadline>ends Sunday<\/span>/, 'the announcement must lead with an explicit weekly deadline');
+assert.match(offerScript, /ends in \$\{daysUntilSunday\} day/, 'the announcement must show the exact number of days remaining');
+assert.match(offerScript, /bannerDeadlines\.forEach/, 'the announcement deadline must update with the weekly countdown');
 assert.match(homepage, /class="offer-timer" role="timer"[^>]*data-offer-timer/, 'the hero must show an accessible live offer timer');
 assert.match(homepage, /data-offer-timer-days>[—<]/, 'the timer must expose a days value');
 assert.match(homepage, /data-offer-timer-hours>[—<]/, 'the timer must expose an hours value');

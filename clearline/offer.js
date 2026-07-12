@@ -7,6 +7,7 @@
   const offer = Object.freeze({ total: 3, verifiedClaimed: 1, verifiedThrough: '2026-07-12' });
   const offerDeadlines = document.querySelectorAll('[data-offer-deadline]');
   const countdowns = document.querySelectorAll('[data-offer-countdown]');
+  const bannerDeadlines = document.querySelectorAll('[data-offer-banner-deadline]');
   const dayNumbers = document.querySelectorAll('[data-offer-days-number]');
   const dayLabels = document.querySelectorAll('[data-offer-days-label]');
   const timers = document.querySelectorAll('[data-offer-timer]');
@@ -70,6 +71,9 @@
     const countdownText = daysUntilSunday === 0
       ? 'Offer ends today'
       : `${daysUntilSunday} day${daysUntilSunday === 1 ? '' : 's'} left`;
+    const bannerDeadlineText = daysUntilSunday === 0
+      ? 'ends today'
+      : `ends in ${daysUntilSunday} day${daysUntilSunday === 1 ? '' : 's'}`;
 
     const remainingMilliseconds = Math.max(deadline.getTime() - now.getTime(), 0);
     const totalMinutes = Math.floor(remainingMilliseconds / (60 * 1000));
@@ -85,6 +89,7 @@
     });
 
     countdowns.forEach((element) => { element.textContent = countdownText; });
+    bannerDeadlines.forEach((element) => { element.textContent = bannerDeadlineText; });
     dayNumbers.forEach((element) => { element.textContent = daysUntilSunday; });
     dayLabels.forEach((element) => {
       element.textContent = daysUntilSunday === 0 ? 'ends today' : `day${daysUntilSunday === 1 ? '' : 's'} left`;
