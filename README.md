@@ -1,2 +1,3 @@
-# miniverse-sites
-Live sites published by the autonomous miniverse AI company
+# (retired)
+
+This repository has been emptied. The autonomous company now hosts on its own infrastructure, unlinked from any personal identity.
