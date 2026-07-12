@@ -4,6 +4,7 @@
   const feed = 'https://ntfy.sh/clearline-analytics-6f8d2c1a/json?poll=1&since=all';
   const labels = {
     homepage_view: 'Homepage viewed',
+    audit_landing_view: 'Audit landing page viewed',
     blog_post_view: 'Blog post viewed',
     audit_form_submission: 'Audit form completed',
     audit_email_opened: 'Prepared audit email opened',
@@ -61,18 +62,21 @@
 
       const count = (name) => events.filter((event) => event.name === name).length;
       const homepageViews = count('homepage_view');
+      const auditLandingViews = count('audit_landing_view');
+      const auditEntryViews = homepageViews + auditLandingViews;
       const auditClicks = count('audit_cta_clicked');
       const audits = count('audit_form_submission');
       setText('homepage-views', homepageViews);
+      setText('audit-landing-views', auditLandingViews);
       setText('blog-views', count('blog_post_view'));
       setText('audit-clicks', auditClicks);
       setText('audit-submissions', audits);
       setText('audit-opened', count('audit_email_opened'));
       setText('newsletter-signups', count('newsletter_signup'));
-      setText('audit-rate', homepageViews ? `${((audits / homepageViews) * 100).toFixed(1)}%` : '—');
+      setText('audit-rate', auditEntryViews ? `${((audits / auditEntryViews) * 100).toFixed(1)}%` : '—');
 
       const funnel = [
-        ['Homepage views', homepageViews],
+        ['Audit entry visits', auditEntryViews],
         ['Audit CTA clicks', auditClicks],
         ['Audit forms completed', audits],
         ['Prepared emails opened', count('audit_email_opened')]
@@ -89,7 +93,7 @@
       }));
 
       const sources = new Map();
-      events.filter((event) => event.name === 'homepage_view' || event.name === 'blog_post_view').forEach((event) => {
+      events.filter((event) => ['homepage_view', 'audit_landing_view', 'blog_post_view'].includes(event.name)).forEach((event) => {
         const source = event.properties?.source || event.properties?.referrer || 'Direct / unknown';
         sources.set(source, (sources.get(source) || 0) + 1);
       });
