@@ -12,8 +12,8 @@ assert.match(
 );
 assert.match(
   homepage,
-  /Limited availability: 3 founder template bonuses this week/,
-  'the badge must state the concrete weekly offer'
+  /Limited offer: founder template for the first 3 qualifying requests by <time data-offer-deadline>Sunday<\/time>/,
+  'the badge must state the qualified offer and expose its concrete deadline'
 );
 assert.match(
   homepage,
