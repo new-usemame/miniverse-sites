@@ -3,7 +3,31 @@ const pendingEmail = sessionStorage.getItem('clearline_pending_email');
 const intent = new URLSearchParams(window.location.search).get('type');
 
 if (pendingEmail?.startsWith('mailto:')) {
+  const emailFallback = document.querySelector('#email-fallback');
+  const copyRequest = document.querySelector('#copy-request');
+  const fallbackStatus = document.querySelector('#fallback-status');
+  const [addressPart, query = ''] = pendingEmail.slice('mailto:'.length).split('?');
+  const emailParams = new URLSearchParams(query);
+  const recipient = decodeURIComponent(addressPart);
+  const subject = emailParams.get('subject') || '';
+  const body = emailParams.get('body') || '';
+  const preparedRequest = `To: ${recipient}\nSubject: ${subject}\n\n${body}`;
+
   emailLink.href = pendingEmail;
+  emailFallback.hidden = false;
+  document.querySelector('#fallback-recipient').textContent = recipient;
+
+  copyRequest.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(preparedRequest);
+      fallbackStatus.textContent = 'Prepared request copied. Paste it into a new email and press send.';
+    } catch {
+      window.prompt('Copy this prepared request:', preparedRequest);
+      fallbackStatus.textContent = 'Copy the request above, then paste it into a new email.';
+    }
+    window.clearlineAnalytics?.track(intent === 'audit' ? 'audit_email_copied' : 'contact_email_copied');
+  });
+
   emailLink.addEventListener('click', () => {
     window.clearlineAnalytics?.track(intent === 'audit' ? 'audit_email_opened' : 'contact_email_opened');
     sessionStorage.removeItem('clearline_pending_email');

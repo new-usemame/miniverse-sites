@@ -25,6 +25,12 @@
       <p id="thanks-copy">Open the prepared email below and press send. We’ll personally reply within two business days.</p>
       <a class="button" id="send-email" href="../#contact">Open my prepared email <span aria-hidden="true">↗</span></a>
       <p class="thanks-note">Your request is not delivered until you send the email in your email app.</p>
+      <details class="email-fallback" id="email-fallback" hidden>
+        <summary>Email app didn’t open?</summary>
+        <p>Copy the prepared request, then paste it into a new email addressed to <strong id="fallback-recipient"></strong>.</p>
+        <button class="button button-outline" id="copy-request" type="button">Copy prepared request</button>
+        <p class="fallback-status" id="fallback-status" role="status" aria-live="polite"></p>
+      </details>
       <aside class="referral-card" id="referral-card" hidden aria-labelledby="referral-title">
         <p class="referral-badge"><span aria-hidden="true"></span> Limited availability</p>
         <h2 id="referral-title">Know another founder whose homepage needs clearer words?</h2>

@@ -8,11 +8,13 @@
     blog_post_view: 'Blog post viewed',
     audit_form_submission: 'Audit form completed',
     audit_email_opened: 'Prepared audit email opened',
+    audit_email_copied: 'Prepared audit request copied',
     audit_cta_clicked: 'Hero audit CTA clicked',
     audit_referral_shared: 'Audit offer shared',
     audit_referral_copied: 'Audit referral link copied',
     contact_form_submission: 'Project inquiry completed',
     contact_email_opened: 'Prepared project email opened',
+    contact_email_copied: 'Prepared project request copied',
     newsletter_signup: 'Newsletter signup started'
   };
 
@@ -72,6 +74,7 @@
       setText('audit-clicks', auditClicks);
       setText('audit-submissions', audits);
       setText('audit-opened', count('audit_email_opened'));
+      setText('audit-copied', count('audit_email_copied'));
       setText('newsletter-signups', count('newsletter_signup'));
       setText('audit-rate', auditEntryViews ? `${((audits / auditEntryViews) * 100).toFixed(1)}%` : '—');
 
