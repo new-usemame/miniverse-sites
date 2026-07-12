@@ -32,6 +32,18 @@
     setText('health-detail', detail);
   }
 
+  function utcDay(timestamp) {
+    return new Date(timestamp).toISOString().slice(0, 10);
+  }
+
+  function describeChange(current, previous) {
+    if (!previous && !current) return 'No activity yesterday';
+    if (!previous) return 'Up from 0 yesterday';
+    const change = ((current - previous) / previous) * 100;
+    if (!change) return 'Same as yesterday';
+    return `${change > 0 ? 'Up' : 'Down'} ${Math.abs(change).toFixed(0)}% vs yesterday`;
+  }
+
   async function loadMetrics() {
     const status = document.querySelector('#status');
     const refresh = document.querySelector('#refresh');
@@ -77,6 +89,36 @@
       setText('audit-copied', count('audit_email_copied'));
       setText('newsletter-signups', count('newsletter_signup'));
       setText('audit-rate', auditEntryViews ? `${((audits / auditEntryViews) * 100).toFixed(1)}%` : '—');
+
+      const now = new Date();
+      const todayKey = utcDay(now);
+      const yesterday = new Date(now);
+      yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+      const yesterdayKey = utcDay(yesterday);
+      const eventsOn = (day) => events.filter((event) => utcDay(event.timestamp) === day);
+      const dailyCount = (dailyEvents, names) => dailyEvents.filter((event) => names.includes(event.name)).length;
+      const todayEvents = eventsOn(todayKey);
+      const yesterdayEvents = eventsOn(yesterdayKey);
+      const entryNames = ['homepage_view', 'audit_landing_view'];
+      const todayEntries = dailyCount(todayEvents, entryNames);
+      const yesterdayEntries = dailyCount(yesterdayEvents, entryNames);
+      const todayClicks = dailyCount(todayEvents, ['audit_cta_clicked']);
+      const yesterdayClicks = dailyCount(yesterdayEvents, ['audit_cta_clicked']);
+      const todayAudits = dailyCount(todayEvents, ['audit_form_submission']);
+      const yesterdayAudits = dailyCount(yesterdayEvents, ['audit_form_submission']);
+      const todayRate = todayEntries ? (todayAudits / todayEntries) * 100 : null;
+      const yesterdayRate = yesterdayEntries ? (yesterdayAudits / yesterdayEntries) * 100 : null;
+      setText('daily-date', new Intl.DateTimeFormat('en', { dateStyle: 'long', timeZone: 'UTC' }).format(now));
+      setText('today-entry-visits', todayEntries);
+      setText('today-audit-clicks', todayClicks);
+      setText('today-audit-submissions', todayAudits);
+      setText('today-audit-rate', todayRate === null ? '—' : `${todayRate.toFixed(1)}%`);
+      setText('entry-comparison', describeChange(todayEntries, yesterdayEntries));
+      setText('click-comparison', describeChange(todayClicks, yesterdayClicks));
+      setText('submission-comparison', describeChange(todayAudits, yesterdayAudits));
+      setText('rate-comparison', todayRate === null || yesterdayRate === null
+        ? 'Needs visits on both days'
+        : describeChange(todayRate, yesterdayRate));
 
       const funnel = [
         ['Audit entry visits', auditEntryViews],
