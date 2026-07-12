@@ -102,6 +102,15 @@ document.querySelectorAll('[data-audit]').forEach((link) => {
   });
 });
 
+const mobileAuditCta = document.querySelector('[data-mobile-audit-cta]');
+const contactSection = document.querySelector('#contact');
+if (mobileAuditCta && contactSection && 'IntersectionObserver' in window) {
+  const contactObserver = new IntersectionObserver(([entry]) => {
+    mobileAuditCta.classList.toggle('is-hidden', entry.isIntersecting);
+  }, { threshold: 0.08 });
+  contactObserver.observe(contactSection);
+}
+
 document.querySelector('#contact-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
