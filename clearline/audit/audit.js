@@ -16,6 +16,8 @@ if (externalReferrer) sessionStorage.setItem('clearline_referrer', externalRefer
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const data = new FormData(form);
+  const firstName = String(data.get('firstName') || '').trim();
+  const improvement = String(data.get('message') || '').trim();
   const attribution = [
     data.get('source') && `Source: ${data.get('source')}`,
     data.get('medium') && `Medium: ${data.get('medium')}`,
@@ -23,7 +25,9 @@ form.addEventListener('submit', async (event) => {
     data.get('referrer') && `Referrer: ${data.get('referrer')}`
   ].filter(Boolean);
   const subject = encodeURIComponent('Free homepage audit request');
-  const body = encodeURIComponent(`Hi Clearline,\n\nI'm ${data.get('firstName')} (${data.get('email')}).\n\nHomepage: ${data.get('website')}\n\nWhat I want to improve: ${data.get('message')}${attribution.length ? `\n\nHow I found Clearline:\n${attribution.join('\n')}` : ''}`);
+  const introduction = firstName ? `I'm ${firstName} (${data.get('email')}).` : `My email is ${data.get('email')}.`;
+  const improvementNote = improvement ? `\n\nWhat I want to improve: ${improvement}` : '';
+  const body = encodeURIComponent(`Hi Clearline,\n\n${introduction}\n\nHomepage: ${data.get('website')}${improvementNote}${attribution.length ? `\n\nHow I found Clearline:\n${attribution.join('\n')}` : ''}`);
   const mailto = `mailto:${clearlineInbox}?subject=${subject}&body=${body}`;
 
   window.clearlineAnalytics?.track('audit_form_submission', { service: 'Website copy', landing: 'dedicated_audit' });

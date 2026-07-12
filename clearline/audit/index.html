@@ -37,13 +37,14 @@
       <form id="audit-form" class="audit-form">
         <p class="form-kicker">Request your audit</p>
         <h2>What should we review?</h2>
+        <p class="form-intro">Just two required fields. Add context only if it helps.</p>
         <input type="hidden" name="intent" value="audit">
         <input type="hidden" name="service" value="Website copy">
         <input type="hidden" name="source"><input type="hidden" name="medium"><input type="hidden" name="campaign"><input type="hidden" name="referrer">
-        <label>First name<input name="firstName" autocomplete="given-name" required placeholder="Jordan"></label>
+        <label>First name <span class="optional">Optional</span><input name="firstName" autocomplete="given-name" placeholder="Jordan"></label>
         <label>Work email<input type="email" name="email" autocomplete="email" required placeholder="jordan@company.com"></label>
         <label>Homepage URL<input type="url" name="website" autocomplete="url" required placeholder="https://yourcompany.com"></label>
-        <label>What do you most want to improve?<textarea name="message" required rows="3" placeholder="For example: make our offer clearer or get more demo requests"></textarea></label>
+        <label>What do you most want to improve? <span class="optional">Optional</span><textarea name="message" rows="3" placeholder="For example: make our offer clearer or get more demo requests"></textarea></label>
         <button class="button submit-button" type="submit">Get my free homepage audit <span aria-hidden="true">↗</span></button>
         <p class="form-note">Your details are used only to prepare and deliver your audit.</p>
         <p class="form-status" aria-live="polite"></p>
