@@ -5,6 +5,7 @@ const intent = new URLSearchParams(window.location.search).get('type');
 if (pendingEmail?.startsWith('mailto:')) {
   emailLink.href = pendingEmail;
   emailLink.addEventListener('click', () => {
+    window.clearlineAnalytics?.track(intent === 'audit' ? 'audit_email_opened' : 'contact_email_opened');
     sessionStorage.removeItem('clearline_pending_email');
     sessionStorage.removeItem('clearline_inquiry_intent');
   }, { once: true });

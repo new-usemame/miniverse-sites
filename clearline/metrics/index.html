@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0d5846">
+  <title>Acquisition metrics — Clearline Content</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="metrics.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="../" aria-label="Clearline Content home"><span class="logo-mark" aria-hidden="true">C</span><span>Clearline<span class="logo-accent">.</span></span></a>
+    <button class="button button-small" id="refresh" type="button">Refresh</button>
+  </header>
+  <main id="main" class="metrics-main">
+    <section class="metrics-heading">
+      <p class="eyebrow">Acquisition pulse</p>
+      <h1>What’s moving visitors forward?</h1>
+      <p>Anonymous activity retained by the reporting service. No prospect contact details or submitted content are collected here.</p>
+      <p class="status" id="status" role="status">Loading current activity…</p>
+    </section>
+
+    <section class="metric-grid" aria-label="Key metrics">
+      <article><span>Homepage views</span><strong id="homepage-views">—</strong></article>
+      <article><span>Blog views</span><strong id="blog-views">—</strong></article>
+      <article><span>Audit forms completed</span><strong id="audit-submissions">—</strong></article>
+      <article><span>Audit emails opened</span><strong id="audit-opened">—</strong></article>
+      <article><span>Newsletter signups</span><strong id="newsletter-signups">—</strong></article>
+      <article class="featured"><span>Homepage → audit rate</span><strong id="audit-rate">—</strong></article>
+    </section>
+
+    <section class="activity-card" aria-labelledby="activity-title">
+      <div><p class="eyebrow">Recent signals</p><h2 id="activity-title">Latest activity</h2></div>
+      <ol id="activity-list"><li>Waiting for events…</li></ol>
+    </section>
+  </main>
+  <script src="metrics.js"></script>
+</body>
+</html>
