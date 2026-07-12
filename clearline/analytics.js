@@ -103,6 +103,22 @@
   window.addEventListener('online', flushQueue);
 
   const pageType = document.body.dataset.analyticsPage;
-  if (pageType) track(`${pageType}_view`);
+  if (pageType) {
+    const params = new URLSearchParams(window.location.search);
+    let referrer = '';
+    try {
+      referrer = document.referrer && new URL(document.referrer).origin !== window.location.origin
+        ? new URL(document.referrer).hostname
+        : '';
+    } catch {
+      referrer = '';
+    }
+    track(`${pageType}_view`, {
+      source: (params.get('utm_source') || '').slice(0, 100),
+      medium: (params.get('utm_medium') || '').slice(0, 100),
+      campaign: (params.get('utm_campaign') || '').slice(0, 100),
+      referrer
+    });
+  }
   else flushQueue();
 }());

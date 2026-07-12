@@ -45,13 +45,50 @@
 
       const count = (name) => events.filter((event) => event.name === name).length;
       const homepageViews = count('homepage_view');
+      const auditClicks = count('audit_cta_clicked');
       const audits = count('audit_form_submission');
       setText('homepage-views', homepageViews);
       setText('blog-views', count('blog_post_view'));
+      setText('audit-clicks', auditClicks);
       setText('audit-submissions', audits);
       setText('audit-opened', count('audit_email_opened'));
       setText('newsletter-signups', count('newsletter_signup'));
       setText('audit-rate', homepageViews ? `${((audits / homepageViews) * 100).toFixed(1)}%` : '—');
+
+      const funnel = [
+        ['Homepage views', homepageViews],
+        ['Audit CTA clicks', auditClicks],
+        ['Audit forms completed', audits],
+        ['Prepared emails opened', count('audit_email_opened')]
+      ];
+      document.querySelector('#funnel-list').replaceChildren(...funnel.map(([label, value], index) => {
+        const item = document.createElement('li');
+        const name = document.createElement('span');
+        const result = document.createElement('b');
+        name.textContent = label;
+        const previous = index ? funnel[index - 1][1] : 0;
+        result.textContent = index && previous ? `${value} · ${((value / previous) * 100).toFixed(1)}%` : String(value);
+        item.append(name, result);
+        return item;
+      }));
+
+      const sources = new Map();
+      events.filter((event) => event.name === 'homepage_view' || event.name === 'blog_post_view').forEach((event) => {
+        const source = event.properties?.source || event.properties?.referrer || 'Direct / unknown';
+        sources.set(source, (sources.get(source) || 0) + 1);
+      });
+      const sourceRows = [...sources.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const sourceList = document.querySelector('#source-list');
+      sourceList.replaceChildren(...sourceRows.map(([source, value]) => {
+        const item = document.createElement('li');
+        const name = document.createElement('span');
+        const result = document.createElement('b');
+        name.textContent = source;
+        result.textContent = value;
+        item.append(name, result);
+        return item;
+      }));
+      if (!sourceRows.length) sourceList.innerHTML = '<li>Waiting for attributed visits…</li>';
 
       const list = document.querySelector('#activity-list');
       list.replaceChildren(...(events.slice(0, 8).map((event) => {
