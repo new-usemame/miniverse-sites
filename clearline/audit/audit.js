@@ -1,6 +1,7 @@
 const form = document.querySelector('#audit-form');
 const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign'];
 const params = new URLSearchParams(window.location.search);
+const clearlineInbox = ['pj4wx2vj6n', 'privaterelay.appleid.com'].join('@');
 
 campaignKeys.forEach((key) => {
   const value = params.get(key);
@@ -23,7 +24,7 @@ form.addEventListener('submit', async (event) => {
   ].filter(Boolean);
   const subject = encodeURIComponent('Free homepage audit request');
   const body = encodeURIComponent(`Hi Clearline,\n\nI'm ${data.get('firstName')} (${data.get('email')}).\n\nHomepage: ${data.get('website')}\n\nWhat I want to improve: ${data.get('message')}${attribution.length ? `\n\nHow I found Clearline:\n${attribution.join('\n')}` : ''}`);
-  const mailto = `mailto:?subject=${subject}&body=${body}`;
+  const mailto = `mailto:${clearlineInbox}?subject=${subject}&body=${body}`;
 
   window.clearlineAnalytics?.track('audit_form_submission', { service: 'Website copy', landing: 'dedicated_audit' });
   await window.clearlineNotifications?.notify('audit_form_submission', { id: `audit:${Date.now()}` });

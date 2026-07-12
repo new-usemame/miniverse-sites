@@ -11,6 +11,7 @@ if (pendingEmail?.startsWith('mailto:')) {
   }, { once: true });
 } else {
   emailLink.textContent = 'Return to the inquiry form';
+  emailLink.href = intent === 'audit' ? '../audit/' : '../#contact';
 }
 
 if (intent === 'audit') {

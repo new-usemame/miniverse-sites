@@ -1,4 +1,5 @@
 const newsletterForm = document.querySelector('#newsletter-form');
+const clearlineInbox = ['pj4wx2vj6n', 'privaterelay.appleid.com'].join('@');
 
 newsletterForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -9,7 +10,7 @@ newsletterForm.addEventListener('submit', (event) => {
   window.clearlineAnalytics?.track('newsletter_signup', { placement: 'blog_sidebar' });
 
   status.textContent = 'Opening your email app to confirm…';
-  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  window.location.href = `mailto:${clearlineInbox}?subject=${subject}&body=${body}`;
 });
 
 document.querySelector('#year').textContent = new Date().getFullYear();

@@ -1,6 +1,7 @@
 const menuButton = document.querySelector('.menu-button');
 const nav = document.querySelector('#site-nav');
 const campaignKeys = ['utm_source', 'utm_medium', 'utm_campaign'];
+const clearlineInbox = ['pj4wx2vj6n', 'privaterelay.appleid.com'].join('@');
 
 function captureAttribution() {
   const params = new URLSearchParams(window.location.search);
@@ -94,7 +95,7 @@ document.querySelector('#contact-form').addEventListener('submit', async (event)
   const attributionBlock = attribution.length ? `\n\nHow I found Clearline:\n${attribution.join('\n')}` : '';
   const body = encodeURIComponent(`Hi Clearline,\n\nI'm ${data.get('firstName')} (${data.get('email')}).\n\nI'm interested in: ${data.get('service')}${website}\n\n${data.get('message')}${attributionBlock}`);
   const intent = data.get('intent') === 'audit' ? 'audit' : 'project';
-  const mailto = `mailto:?subject=${subject}&body=${body}`;
+  const mailto = `mailto:${clearlineInbox}?subject=${subject}&body=${body}`;
   window.clearlineAnalytics?.track(intent === 'audit' ? 'audit_form_submission' : 'contact_form_submission', {
     service: data.get('service')
   });
