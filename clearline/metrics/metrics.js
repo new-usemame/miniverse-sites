@@ -23,6 +23,12 @@
     return new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(timestamp));
   }
 
+  function setCollectorHealth(state, title, detail) {
+    document.querySelector('#collector-health').dataset.state = state;
+    setText('health-title', title);
+    setText('health-detail', detail);
+  }
+
   async function loadMetrics() {
     const status = document.querySelector('#status');
     const refresh = document.querySelector('#refresh');
@@ -33,15 +39,25 @@
       const response = await fetch(feed, { cache: 'no-store' });
       if (!response.ok) throw new Error(`Feed returned ${response.status}`);
       const lines = (await response.text()).trim().split('\n').filter(Boolean);
+      let readableRecords = 0;
       const events = lines.flatMap((line) => {
         try {
           const envelope = JSON.parse(line);
           const event = JSON.parse(envelope.message || '{}');
+          readableRecords += 1;
           return labels[event.name] ? [event] : [];
         } catch {
           return [];
         }
       }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      const ignoredRecords = readableRecords - events.length;
+      setCollectorHealth(
+        'connected',
+        'Analytics collector connected',
+        ignoredRecords
+          ? `${ignoredRecords} diagnostic or unknown ${ignoredRecords === 1 ? 'record was' : 'records were'} ignored.`
+          : 'The reporting feed responded successfully.'
+      );
 
       const count = (name) => events.filter((event) => event.name === name).length;
       const homepageViews = count('homepage_view');
@@ -108,6 +124,7 @@
         ? `Showing ${events.length} retained events since ${formatTime(oldest)}. Last refreshed ${formatTime(new Date().toISOString())}.`
         : 'Tracking is live. The dashboard will update after the next visit or conversion.';
     } catch {
+      setCollectorHealth('error', 'Analytics collector unavailable', 'The dashboard could not reach the reporting feed. Try refreshing in a moment.');
       status.textContent = 'Metrics are temporarily unavailable. No site forms or visitor experiences are affected.';
     } finally {
       refresh.disabled = false;
