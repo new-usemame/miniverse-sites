@@ -65,6 +65,9 @@ document.querySelectorAll('[data-service]').forEach((link) => {
 
 document.querySelectorAll('[data-audit]').forEach((link) => {
   link.addEventListener('click', () => {
+    window.clearlineAnalytics?.track('audit_cta_clicked', {
+      placement: link.dataset.placement || 'audit_section'
+    });
     const select = document.querySelector('[name="service"]');
     const message = document.querySelector('[name="message"]');
     const websiteField = document.querySelector('.website-field');
@@ -73,12 +76,6 @@ document.querySelectorAll('[data-audit]').forEach((link) => {
     websiteField.querySelector('input').required = true;
     document.querySelector('[name="intent"]').value = 'audit';
     message.value = "I'd like a free homepage copy audit. The main thing I want my homepage to help me improve is: ";
-  });
-});
-
-document.querySelectorAll('[data-audit-cta]').forEach((link) => {
-  link.addEventListener('click', () => {
-    window.clearlineAnalytics?.track('audit_cta_clicked', { placement: 'hero' });
   });
 });
 
