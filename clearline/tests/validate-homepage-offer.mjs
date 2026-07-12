@@ -21,6 +21,20 @@ assert.match(
   'the homepage must qualify who receives the limited bonus'
 );
 assert.match(
+  homepage,
+  /class="offer-alert" aria-label="Limited founder template offer"/,
+  'the homepage must give the limited offer a prominent, accessible announcement bar'
+);
+assert.match(
+  homepage,
+  /data-audit data-placement="offer_alert"/,
+  'the announcement bar must open the audit flow with distinct attribution'
+);
+assert.match(homepage, /1 of 3 claimed/, 'the announcement must use the verified request count');
+assert.match(homepage, /Two founder-template spots remain/, 'the announcement must state the truthful remaining availability');
+assert.match(homepage, /data-offer-countdown/, 'the announcement must show the live offer deadline');
+assert.doesNotMatch(homepage, /only 1 (?:founder-template )?(?:bonus|spot) left/i, 'the homepage must not claim unsupported scarcity');
+assert.match(
   script,
   /placement: link\.dataset\.placement \|\| 'audit_section'/,
   'audit CTAs must report their placement to analytics'
