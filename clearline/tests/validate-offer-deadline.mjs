@@ -21,6 +21,7 @@ const targets = Array.from({ length: 3 }, () => ({
 const countdown = { textContent: '' };
 const dayNumber = { textContent: '' };
 const dayLabel = { textContent: '' };
+let intervalCallback;
 
 class FixedDate extends Date {
   constructor(...args) {
@@ -31,6 +32,12 @@ class FixedDate extends Date {
 vm.runInNewContext(offerScript, {
   Date: FixedDate,
   Intl,
+  window: {
+    setInterval(callback, delay) {
+      intervalCallback = callback;
+      assert.equal(delay, 60 * 1000);
+    }
+  },
   document: { querySelectorAll: (selector) => ({
     '[data-offer-deadline]': targets,
     '[data-offer-countdown]': [countdown],
@@ -46,5 +53,11 @@ for (const target of targets) {
 assert.equal(countdown.textContent, 'Offer ends today');
 assert.equal(dayNumber.textContent, 0);
 assert.equal(dayLabel.textContent, 'ends today');
+assert.equal(typeof intervalCallback, 'function', 'offer countdown must keep refreshing on long-lived pages');
+
+intervalCallback(new Date('2026-07-13T12:00:00Z'));
+assert.equal(countdown.textContent, '6 days left', 'offer countdown must update after the local day changes');
+assert.equal(dayNumber.textContent, 6);
+assert.equal(dayLabel.textContent, 'days left');
 
 console.log('Validated the truthful, automatically dated founder-template offer.');

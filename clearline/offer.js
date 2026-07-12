@@ -26,35 +26,40 @@
 
   if (!offerDeadlines.length && !countdowns.length && !dayNumbers.length) return;
 
-  const now = new Date();
-  const deadline = new Date(now);
-  const daysUntilSunday = (7 - now.getDay()) % 7;
+  function renderCountdown(now = new Date()) {
+    const deadline = new Date(now);
+    const daysUntilSunday = (7 - now.getDay()) % 7;
 
-  deadline.setDate(now.getDate() + daysUntilSunday);
-  deadline.setHours(23, 59, 59, 999);
+    deadline.setDate(now.getDate() + daysUntilSunday);
+    deadline.setHours(23, 59, 59, 999);
 
-  const formattedDeadline = new Intl.DateTimeFormat('en', {
-    month: 'short',
-    day: 'numeric'
-  }).format(deadline);
+    const formattedDeadline = new Intl.DateTimeFormat('en', {
+      month: 'short',
+      day: 'numeric'
+    }).format(deadline);
 
-  offerDeadlines.forEach((element) => {
-    element.textContent = formattedDeadline;
-    element.setAttribute('datetime', [
-      deadline.getFullYear(),
-      String(deadline.getMonth() + 1).padStart(2, '0'),
-      String(deadline.getDate()).padStart(2, '0')
-    ].join('-'));
-  });
+    offerDeadlines.forEach((element) => {
+      element.textContent = formattedDeadline;
+      element.setAttribute('datetime', [
+        deadline.getFullYear(),
+        String(deadline.getMonth() + 1).padStart(2, '0'),
+        String(deadline.getDate()).padStart(2, '0')
+      ].join('-'));
+    });
 
-  const remainingDays = daysUntilSunday;
-  const countdownText = remainingDays === 0
-    ? 'Offer ends today'
-    : `${remainingDays} day${remainingDays === 1 ? '' : 's'} left`;
+    const countdownText = daysUntilSunday === 0
+      ? 'Offer ends today'
+      : `${daysUntilSunday} day${daysUntilSunday === 1 ? '' : 's'} left`;
 
-  countdowns.forEach((element) => { element.textContent = countdownText; });
-  dayNumbers.forEach((element) => { element.textContent = remainingDays; });
-  dayLabels.forEach((element) => {
-    element.textContent = remainingDays === 0 ? 'ends today' : `day${remainingDays === 1 ? '' : 's'} left`;
-  });
+    countdowns.forEach((element) => { element.textContent = countdownText; });
+    dayNumbers.forEach((element) => { element.textContent = daysUntilSunday; });
+    dayLabels.forEach((element) => {
+      element.textContent = daysUntilSunday === 0 ? 'ends today' : `day${daysUntilSunday === 1 ? '' : 's'} left`;
+    });
+  }
+
+  renderCountdown();
+
+  // Keep the day count correct if a prospect leaves the page open overnight.
+  window.setInterval(renderCountdown, 60 * 1000);
 }());
