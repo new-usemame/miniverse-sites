@@ -48,6 +48,7 @@ document.querySelectorAll('[data-plan]').forEach((link) => {
   link.addEventListener('click', () => {
     const select = document.querySelector('[name="service"]');
     const plan = link.dataset.plan;
+    document.querySelector('[name="intent"]').value = 'project';
     select.value = `${plan} package`;
     document.querySelector('[name="message"]').value = `I'm interested in the ${plan} package. `;
   });
@@ -56,6 +57,7 @@ document.querySelectorAll('[data-plan]').forEach((link) => {
 document.querySelectorAll('[data-service]').forEach((link) => {
   link.addEventListener('click', () => {
     const service = link.dataset.service;
+    document.querySelector('[name="intent"]').value = 'project';
     document.querySelector('[name="service"]').value = service;
     document.querySelector('[name="message"]').value = `I'm interested in ${service.toLowerCase()}. `;
   });
@@ -69,6 +71,7 @@ document.querySelectorAll('[data-audit]').forEach((link) => {
     select.value = 'Website copy';
     websiteField.hidden = false;
     websiteField.querySelector('input').required = true;
+    document.querySelector('[name="intent"]').value = 'audit';
     message.value = "I'd like a free homepage copy audit. The main thing I want my homepage to help me improve is: ";
   });
 });
@@ -87,8 +90,15 @@ document.querySelector('#contact-form').addEventListener('submit', (event) => {
   ].filter(Boolean);
   const attributionBlock = attribution.length ? `\n\nHow I found Clearline:\n${attribution.join('\n')}` : '';
   const body = encodeURIComponent(`Hi Clearline,\n\nI'm ${data.get('firstName')} (${data.get('email')}).\n\nI'm interested in: ${data.get('service')}${website}\n\n${data.get('message')}${attributionBlock}`);
-  document.querySelector('.form-status').textContent = 'Opening your email app to send the details…';
-  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  const intent = data.get('intent') === 'audit' ? 'audit' : 'project';
+  const mailto = `mailto:?subject=${subject}&body=${body}`;
+  window.clearlineAnalytics?.track(intent === 'audit' ? 'audit_form_submission' : 'contact_form_submission', {
+    service: data.get('service')
+  });
+  sessionStorage.setItem('clearline_pending_email', mailto);
+  sessionStorage.setItem('clearline_inquiry_intent', intent);
+  document.querySelector('.form-status').textContent = 'Thanks—taking you to the final send step…';
+  window.location.href = `thank-you/?type=${intent}`;
 });
 
 document.querySelector('#year').textContent = new Date().getFullYear();

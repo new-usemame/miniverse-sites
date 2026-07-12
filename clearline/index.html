@@ -55,7 +55,7 @@
     }
   </script>
 </head>
-<body>
+<body data-analytics-page="homepage">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <a class="logo" href="#top" aria-label="Clearline Content home">
@@ -267,6 +267,7 @@
       <div class="section contact-wrap">
         <div class="contact-copy"><p class="eyebrow light">Let’s make it clear</p><h2>Your next great piece of content starts here.</h2><p>Tell us what you’re working on. We’ll reply with the right questions and a clear next step—no hard sell.</p><div class="contact-note"><span>↗</span><p><b>What happens next?</b><br>Expect a personal response within two business days.</p></div></div>
         <form id="contact-form">
+          <input type="hidden" name="intent" value="project">
           <input type="hidden" name="source">
           <input type="hidden" name="medium">
           <input type="hidden" name="campaign">
@@ -288,6 +289,7 @@
     <div><a href="#audit">Free audit</a><a href="#services">Services</a><a href="#work">Work</a><a href="#pricing">Pricing</a><a href="blog/why-most-startup-content-fails/">Blog</a><a href="checklist/">Free guide</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div>
     <small>© <span id="year"></span> Clearline Content. All rights reserved.</small>
   </footer>
+  <script src="analytics.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

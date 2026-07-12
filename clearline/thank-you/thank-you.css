@@ -1,0 +1,9 @@
+.thanks-main{min-height:calc(100vh - 84px);display:grid;place-items:center;padding:55px 24px 90px;background:radial-gradient(circle at 75% 30%,#e0f2c5 0,transparent 35%),var(--cream)}
+.thanks-card{width:min(100%,700px);padding:clamp(35px,7vw,70px);border:1px solid var(--border);border-radius:10px;background:white;box-shadow:var(--shadow);text-align:center}
+.thanks-check{width:64px;height:64px;margin:0 auto 26px;display:grid;place-items:center;border-radius:50%;background:var(--mint);color:var(--green);font:800 28px "Manrope"}
+.thanks-card h1{margin:0 auto 22px;max-width:570px;font-size:clamp(39px,6vw,62px);line-height:1.08;letter-spacing:-3px}
+.thanks-card>p:not(.eyebrow){max-width:540px;margin:0 auto 30px;color:var(--muted);font-size:17px}
+.thanks-card .button{margin-bottom:16px}
+.thanks-card .thanks-note{font-size:12px;margin-bottom:25px}
+.thanks-card>.text-link{display:block;font-size:13px;color:var(--green)}
+@media(max-width:580px){.thanks-main{padding:30px 16px 60px}.thanks-card h1{letter-spacing:-2px}}
