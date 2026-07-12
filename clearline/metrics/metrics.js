@@ -1,7 +1,8 @@
 (function () {
   'use strict';
 
-  const feed = 'https://ntfy.sh/clearline-analytics-6f8d2c1a/json?poll=1&since=all';
+  const collector = 'https://ntfy.sh/clearline-analytics-6f8d2c1a';
+  const feed = `${collector}/json?poll=1&since=all`;
   const refreshInterval = 30000;
   let refreshTimer;
   let loading = false;
@@ -201,7 +202,51 @@
     }
   }
 
+  async function runPipelineCheck() {
+    const button = document.querySelector('#check-pipeline');
+    const result = document.querySelector('#pipeline-result');
+    const id = window.crypto?.randomUUID?.() || `diagnostic:${Date.now()}`;
+    const diagnostic = {
+      id,
+      name: 'analytics_diagnostic',
+      properties: {},
+      path: '/clearline/metrics/',
+      timestamp: new Date().toISOString(),
+      sessionId: ''
+    };
+    button.disabled = true;
+    result.dataset.state = 'checking';
+    result.textContent = 'Sending a diagnostic event and checking that it returns…';
+    try {
+      const sent = await fetch(collector, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        body: JSON.stringify(diagnostic)
+      });
+      if (!sent.ok) throw new Error(`Collector returned ${sent.status}`);
+      const received = await fetch(feed, { cache: 'no-store' });
+      if (!received.ok) throw new Error(`Feed returned ${received.status}`);
+      const found = (await received.text()).split('\n').some((line) => {
+        try {
+          return JSON.parse(JSON.parse(line).message || '{}').id === id;
+        } catch {
+          return false;
+        }
+      });
+      if (!found) throw new Error('Diagnostic event was not returned by the feed');
+      result.dataset.state = 'success';
+      result.textContent = 'End-to-end tracking passed: browser write and dashboard read both work.';
+      await loadMetrics();
+    } catch {
+      result.dataset.state = 'error';
+      result.textContent = 'End-to-end tracking failed. The site can still run, but event delivery needs attention.';
+    } finally {
+      button.disabled = false;
+    }
+  }
+
   document.querySelector('#refresh').addEventListener('click', loadMetrics);
+  document.querySelector('#check-pipeline').addEventListener('click', runPipelineCheck);
   function scheduleRefresh() {
     window.clearInterval(refreshTimer);
     if (document.hidden) {
