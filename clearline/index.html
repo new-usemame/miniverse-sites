@@ -294,10 +294,10 @@
           <input type="hidden" name="medium">
           <input type="hidden" name="campaign">
           <input type="hidden" name="referrer">
-          <div class="field-row"><label>First name<input name="firstName" autocomplete="given-name" required placeholder="Jordan"></label><label>Work email<input type="email" name="email" autocomplete="email" required placeholder="jordan@company.com"></label></div>
+          <div class="field-row"><label>First name <span class="field-optional" data-first-name-optional hidden>(optional)</span><input name="firstName" autocomplete="given-name" required placeholder="Jordan"></label><label>Work email<input type="email" name="email" autocomplete="email" required placeholder="jordan@company.com"></label></div>
           <label class="website-field" hidden>Homepage URL<input type="url" name="website" autocomplete="url" placeholder="https://yourcompany.com"></label>
           <label>What can we help with?<select name="service" required><option value="">Choose a service or package</option><optgroup label="Packages"><option>Essentials package</option><option>Growth package</option><option>Partner package</option></optgroup><optgroup label="Services"><option>Website copy</option><option>SEO content</option><option>Thought leadership</option><option>Email campaigns</option><option>Something else</option></optgroup></select></label>
-          <label>Tell us a little about your project<textarea name="message" required rows="4" placeholder="What are you creating, and what would success look like?"></textarea></label>
+          <label><span data-message-label>Tell us a little about your project</span> <span class="field-optional" data-message-optional hidden>(optional)</span><textarea name="message" required rows="4" placeholder="What are you creating, and what would success look like?"></textarea></label>
           <button class="button submit-button" type="submit">Send project details <span aria-hidden="true">↗</span></button>
           <p class="form-status" aria-live="polite"></p>
         </form>
