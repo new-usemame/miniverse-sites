@@ -5,6 +5,7 @@
   const labels = {
     homepage_view: 'Homepage viewed',
     audit_landing_view: 'Audit landing page viewed',
+    blog_index_view: 'Blog index viewed',
     blog_post_view: 'Blog post viewed',
     audit_form_submission: 'Audit form completed',
     audit_email_opened: 'Prepared audit email opened',
@@ -91,7 +92,7 @@
       const audits = count('audit_form_submission');
       setText('homepage-views', homepageViews);
       setText('audit-landing-views', auditLandingViews);
-      setText('blog-views', uniqueCount('blog_post_view'));
+      setText('blog-views', uniqueCountAcross(['blog_index_view', 'blog_post_view']));
       setText('audit-clicks', auditClicks);
       setText('audit-submissions', audits);
       setText('audit-opened', count('audit_email_opened'));
@@ -152,7 +153,7 @@
       }));
 
       const sources = new Map();
-      events.filter((event) => ['homepage_view', 'audit_landing_view', 'blog_post_view'].includes(event.name)).forEach((event) => {
+      events.filter((event) => ['homepage_view', 'audit_landing_view', 'blog_index_view', 'blog_post_view'].includes(event.name)).forEach((event) => {
         const source = event.properties?.source || event.properties?.referrer || 'Direct / unknown';
         sources.set(source, (sources.get(source) || 0) + 1);
       });
