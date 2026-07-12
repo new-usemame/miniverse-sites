@@ -18,6 +18,9 @@ const targets = Array.from({ length: 3 }, () => ({
   attributes: {},
   setAttribute(name, value) { this.attributes[name] = value; }
 }));
+const countdown = { textContent: '' };
+const dayNumber = { textContent: '' };
+const dayLabel = { textContent: '' };
 
 class FixedDate extends Date {
   constructor(...args) {
@@ -28,12 +31,20 @@ class FixedDate extends Date {
 vm.runInNewContext(offerScript, {
   Date: FixedDate,
   Intl,
-  document: { querySelectorAll: () => targets }
+  document: { querySelectorAll: (selector) => ({
+    '[data-offer-deadline]': targets,
+    '[data-offer-countdown]': [countdown],
+    '[data-offer-days-number]': [dayNumber],
+    '[data-offer-days-label]': [dayLabel]
+  }[selector] || []) }
 });
 
 for (const target of targets) {
   assert.equal(target.textContent, 'Jul 12');
   assert.equal(target.attributes.datetime, '2026-07-12');
 }
+assert.equal(countdown.textContent, 'Offer ends today');
+assert.equal(dayNumber.textContent, 0);
+assert.equal(dayLabel.textContent, 'ends today');
 
 console.log('Validated the truthful, automatically dated founder-template offer.');
